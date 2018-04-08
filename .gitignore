@@ -1,0 +1,9 @@
+.vs
+[Dd]ebug*/
+obj/
+[Rr]elease*/
+.sln
+.dll
+/Robocode.sln
+/Robocode/Properties/AssemblyInfo.cs
+/Robocode/Robocode.csproj

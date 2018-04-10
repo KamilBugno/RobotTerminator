@@ -3,14 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace FNL.QLearning
 {
     class QRobot :  AdvancedRobot
     {
-        private double previousEnergy;
         private List<QState> states = new List<QState>();
         private QState currentState = new QState();
         private QState previousState = new QState();
@@ -22,28 +23,20 @@ namespace FNL.QLearning
             var qAction = new QAction(this);
             var qLearn = new QLearn();
 
-            TurnLeft(Heading % 90);
+            //ReadQFunctionFromFile();
+
+            //var a = QFunction.Q;
+
             Ahead(moveAmount);
             TurnGunRight(90);
             TurnRight(90);
 
-            var i = 0;
             while (true)
             {
-                i++;
-
                 previousState = currentState;
                 var actionNumber = qAction.SampleAction();
                 currentState.Discretise(moveAmount, previousState);
                 qLearn.Learn(previousState, currentState, actionNumber, currentState.OurEnergy);
-              
-
-                if (i % 50 == 0)
-                {
-                    WriteToFile(currentState, actionNumber);
-                    states.Add(currentState);
-                }
-                    
             }
         }
 
@@ -62,10 +55,56 @@ namespace FNL.QLearning
             base.OnStatus(e);
         }
 
-        public override void OnRoundEnded(RoundEndedEvent evnt)
+        public override void OnRoundEnded(RoundEndedEvent e)
         {
-            var a = states;
-            base.OnRoundEnded(evnt);
+            //WriteQFunctionToFile();
+            base.OnRoundEnded(e);
+        }
+
+        public override void OnRobotDeath(RobotDeathEvent e)
+        {
+            //WriteQFunctionToFile();
+            base.OnRobotDeath(e);
+        }   
+
+        private bool WriteQFunctionToFile()
+        {
+            try
+            {
+                using (Stream count = GetDataFile("count.dat"))
+                {
+                    var data = count;
+                    using (TextWriter tw = new StreamWriter(count))
+                    {
+                        for(var i = 0; i < QFunction.one; i++)
+                        {
+                            for(var j = 0; j < QFunction.two; j++)
+                            {
+                                for(var k = 0; k < QFunction.three; k++)
+                                {
+                                    for(var m = 0; m < QFunction.four; m++)
+                                    {
+                                        for(var n = 0; n < QFunction.five; n++)
+                                        {
+                                            for(var f = 0; f < QFunction.six; f++)
+                                            {
+                                                tw.WriteLine(QFunction.Q[i,j,k,m,n,f]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            return true;
         }
 
         private bool WriteToFile(QState qstate, int actionNumber)
@@ -95,7 +134,7 @@ namespace FNL.QLearning
             return true;
         }
 
-        private bool ReadFile()
+        private bool ReadQFunctionFromFile()
         {
             try
             {
@@ -105,8 +144,25 @@ namespace FNL.QLearning
                     {
                         using (TextReader tr = new StreamReader(count))
                         {
-                            //roundCount = int.Parse(tr.ReadLine());
-                            //battleCount = int.Parse(tr.ReadLine());
+                            for (var i = 0; i < QFunction.one; i++)
+                            {
+                                for (var j = 0; j < QFunction.two; j++)
+                                {
+                                    for (var k = 0; k < QFunction.three; k++)
+                                    {
+                                        for (var m = 0; m < QFunction.four; m++)
+                                        {
+                                            for (var n = 0; n < QFunction.five; n++)
+                                            {
+                                                for (var f = 0; f < QFunction.six; f++)
+                                                {
+                                                    QFunction.Q[i, j, k, m, n, f] = double.Parse(tr.ReadLine());
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

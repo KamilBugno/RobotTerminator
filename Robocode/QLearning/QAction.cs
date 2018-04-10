@@ -1,4 +1,5 @@
 ﻿using System;
+using Robocode;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,26 +21,34 @@ namespace FNL.QLearning
         public int SampleAction()
         {
             var actionNumber = random.Next(0, 5);
-            switch(actionNumber)
+            try
             {
-                case 0:
-                    qrobot.Ahead(100);
-                    break;
-                case 1:
-                    qrobot.TurnLeft(90);
-                    break;
-                case 2:
-                    qrobot.TurnRight(90);
-                    break;
-                case 3:
-                    qrobot.TurnGunLeft(90);
-                    break;
-                case 4:
-                    qrobot.TurnGunRight(90);
-                    break;
-                
+                switch (actionNumber)
+                {
+                    case 0:
+                        qrobot.Ahead(100);
+                        break;
+                    case 1:
+                        qrobot.TurnLeft(90);
+                        qrobot.Ahead(50);
+                        break;
+                    case 2:
+                        qrobot.TurnRight(90);
+                        qrobot.Ahead(50);
+                        break;
+                    case 3:
+                        qrobot.TurnGunLeft(90);
+                        break;
+                    case 4:
+                        qrobot.TurnGunRight(90);
+                        break;
+                }
             }
-            return actionNumber;
+            catch
+            {
+
+            }
+            return actionNumber;       
         }
     }
 }

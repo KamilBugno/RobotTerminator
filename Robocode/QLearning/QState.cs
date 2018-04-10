@@ -6,7 +6,7 @@ namespace FNL.QLearning
 {
     class QState
     {
-        public int[] buckets = { 7, 5, 3, 5, 3 };
+        public int[] buckets = { QFunction.one, QFunction.two, QFunction.three, QFunction.four, QFunction.five };
         public double DistanceToEnemy { set; get; } // 0 - maxDistance
         public double EnemyEnergy { set; get; } // 0 - 100
         public double EnemyVelocity { set; get; } // 0 - Rules.MAX_VELOCITY
@@ -31,7 +31,7 @@ namespace FNL.QLearning
 
         private void UpdateValue(QState previousState, double maxDistance)
         {
-            var numbers = Enumerable.Range(0, 7).ToList();
+            var numbers = Enumerable.Range(0, buckets.Max()).ToList();
             var doubleNubmers = numbers.Select(x => x + 0.0001).ToList();
 
             if (doubleNubmers.Contains(DistanceToEnemy))

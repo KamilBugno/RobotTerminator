@@ -11,6 +11,7 @@ namespace FNL.QLearning
     class QRobot :  AdvancedRobot
     {
         private double previousEnergy;
+        private List<QState> states = new List<QState>();
         private QState currentState = new QState();
         private QState previousState = new QState();
 
@@ -29,17 +30,10 @@ namespace FNL.QLearning
             {
                 previousState = currentState;
                 qAction.SampleAction();
-                var a1 = currentState.DistanceToEnemy;
-                var b2 = currentState.EnemyEnergy;
-                var c3 = currentState.EnemyVelocity;
-                var d4 = currentState.OurEnergy;
-                var e5 = currentState.OurVelocity;
-                currentState.Discretise(moveAmount);
-                var a = currentState.DistanceToEnemy;
-                var b = currentState.EnemyEnergy;
-                var c = currentState.EnemyVelocity;
-                var d = currentState.OurEnergy;
-                var e = currentState.OurVelocity;
+               
+                currentState.Discretise(moveAmount, previousState);
+               
+                states.Add(currentState);
             }
         }
 

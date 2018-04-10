@@ -26,14 +26,18 @@ namespace FNL.QLearning
             TurnGunRight(90);
             TurnRight(90);
 
+            var i = 0;
             while (true)
             {
+                i++;
                 previousState = currentState;
                 qAction.SampleAction();
                
                 currentState.Discretise(moveAmount, previousState);
                
                 states.Add(currentState);
+                if(i % 50 == 0)
+                    WriteToFile(currentState);
             }
         }
 
@@ -51,5 +55,55 @@ namespace FNL.QLearning
             currentState.OurVelocity = e.Status.Velocity;
             base.OnStatus(e);
         }
+
+        private bool WriteToFile(QState qstate)
+        {
+            try
+            {
+                using (Stream count = GetDataFile("count.dat"))
+                {
+                    var data = count;
+                    using (var tw = new StreamWriter(count))
+                    {
+                        data.CopyTo(tw.BaseStream);
+                        tw.WriteLine((int)qstate.DistanceToEnemy + " "
+                            + (int)qstate.EnemyEnergy + " "
+                            + (int)qstate.EnemyVelocity + " "
+                            + (int)qstate.OurEnergy + " "
+                            + (int)qstate.OurVelocity + " ");
+                    }
+                }
+
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool ReadFile()
+        {
+            try
+            {
+                using (Stream count = GetDataFile("count.dat"))
+                {
+                    if (count.Length != 0)
+                    {
+                        using (TextReader tr = new StreamReader(count))
+                        {
+                            //roundCount = int.Parse(tr.ReadLine());
+                            //battleCount = int.Parse(tr.ReadLine());
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+        
     }
 }

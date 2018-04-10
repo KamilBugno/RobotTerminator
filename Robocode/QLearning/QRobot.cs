@@ -20,6 +20,7 @@ namespace FNL.QLearning
             var moveAmount = Math.Max(BattleFieldWidth, BattleFieldHeight);
 
             var qAction = new QAction(this);
+            var qLearn = new QLearn();
 
             TurnLeft(Heading % 90);
             Ahead(moveAmount);
@@ -30,14 +31,19 @@ namespace FNL.QLearning
             while (true)
             {
                 i++;
+
                 previousState = currentState;
-                qAction.SampleAction();
-               
+                var actionNumber = qAction.SampleAction();
                 currentState.Discretise(moveAmount, previousState);
-               
-                states.Add(currentState);
-                if(i % 50 == 0)
-                    WriteToFile(currentState);
+                qLearn.Learn(previousState, currentState, actionNumber, currentState.OurEnergy);
+              
+
+                if (i % 50 == 0)
+                {
+                    WriteToFile(currentState, actionNumber);
+                    states.Add(currentState);
+                }
+                    
             }
         }
 
@@ -56,7 +62,13 @@ namespace FNL.QLearning
             base.OnStatus(e);
         }
 
-        private bool WriteToFile(QState qstate)
+        public override void OnRoundEnded(RoundEndedEvent evnt)
+        {
+            var a = states;
+            base.OnRoundEnded(evnt);
+        }
+
+        private bool WriteToFile(QState qstate, int actionNumber)
         {
             try
             {
@@ -70,7 +82,8 @@ namespace FNL.QLearning
                             + (int)qstate.EnemyEnergy + " "
                             + (int)qstate.EnemyVelocity + " "
                             + (int)qstate.OurEnergy + " "
-                            + (int)qstate.OurVelocity + " ");
+                            + (int)qstate.OurVelocity + " "
+                            + actionNumber);
                     }
                 }
 

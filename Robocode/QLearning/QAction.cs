@@ -17,7 +17,7 @@ namespace FNL.QLearning
             random = new Random();
         }
 
-        public void SampleAction()
+        public int SampleAction()
         {
             var actionNumber = random.Next(0, 5);
             switch(actionNumber)
@@ -39,6 +39,7 @@ namespace FNL.QLearning
                     break;
                 
             }
+            return actionNumber;
         }
     }
 }
